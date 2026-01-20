@@ -12,5 +12,13 @@
 #define symbol_empty '.'
 
 int main(){
-	int N; // grid size 5 - 15
+	int gridSize; // grid size 5 - 15
+	
+	printf("\nEnter grid size: ");
+	scanf("%d", &gridSize);
 
+	if (gridSize < 5 || gridSize > 15){
+		printf("\nError! Defaulting value to 5!\n\n");
+		gridSize = 5;
+	}
+}
