@@ -55,33 +55,38 @@ void playerMode_select(int *playermode, int *compplayer, char *compplayerPrompt)
 	printf("Enter player mode(1-3): "); // get player mode single/multiple
         scanf(" %d", playermode);
 
-        if (*playermode < 1 || *playermode > 3){ //default to singleplayer if value is out of parameters
-                printf("\nError! Defaulting value to 1!\n");
-                *playermode = 1;
-        }
+	while (*playermode < 1 || *playermode > 3){ // ask again if the value is not within parameters
+                printf("Error! Value not acceptable. Enter a value between 1-3: ");
+                scanf(" %d", playermode);
 
-        if (*playermode == 1){ // display selected player mode
-                printf("\nYou have selected Singleplayer mode\n");
-        }else if(*playermode == 2){
-                printf("\nYou have selected 2 player mode\n");
-        }else {
-                printf("\nYou have selected 3 player mode\n");
-        }
+		if (*playermode == 1){ // display selected player mode
+                	printf("\nYou have selected Singleplayer mode\n");
+        	}else if(*playermode == 2){
+                	printf("\nYou have selected 2 player mode\n");
+        	}else {
+                	printf("\nYou have selected 3 player mode\n");
+        	}
+	}
 
-        if (*playermode > 1){ // check for computer opponent permission
-                printf("\nDo you want to enable Computer as an opponent (Y/N): ");
-                scanf(" %c", compplayerPrompt);
+	if (*playermode > 1){
+		while (1){
 
-                if (*compplayerPrompt == 'Y' || *compplayerPrompt == 'y'){ //check for input and select computer/human opponent
-                        *compplayer = 1;
-                        printf("\nComputer opponent enabled!\n");
-                }else if (*compplayerPrompt == 'N' || *compplayerPrompt == 'n'){
-                        *compplayer = 0;
-                        printf("\nHuman opponent mode selected!\n");
-                }else{
-                        printf("\nError! Invalid input! Defaulting to Human Opponent mode\n");
-                        *compplayer = 0;
-                }
+			printf("\nDo you want to enable Computer as an opponent (Y/N): ");
+       	        	scanf(" %c", compplayerPrompt);
 
-        }
+			if (*compplayerPrompt == 'Y' || *compplayerPrompt == 'y'){
+				*compplayer = 1;
+		    		printf("Computer opponent enabled!\n");
+		    		break;
+            		}else if(*compplayerPrompt == 'N' || *compplayerPrompt == 'n'){
+                		*compplayer = 0;
+                		printf("Human opponent mode selected!\n");
+                		break;
+			}else{
+                		printf("Invalid input! Please enter Y or N.");
+                		while (getchar() != '\n');
+			}
+		}
+	}
+
 }
