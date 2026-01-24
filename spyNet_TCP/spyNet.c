@@ -17,7 +17,7 @@ void createGrid(char ***Grid, int gridSize1);
 void printGrid(char **grid, int gridSize2);
 
 typedef struct{
-	int x, y;
+	int xaxis, yaxis;
 	int lives;
 	int intel;
 	char symbol;
@@ -29,7 +29,8 @@ int main(){
 
 	srand(time(NULL));
 
-	int gridSize, playerMode;
+	int gridSize, playerMode, randomRowLoc, randomColLoc;
+	int addPlayer = 0, intelCount = 0, lifeCount = 0, wallCount = 0;
 	int compPlayer = 0;
 	char compPlayerPrompt;
 	char **grid = NULL;
@@ -42,7 +43,67 @@ int main(){
 
 	createGrid(&grid, gridSize);
 	
+	randomRowLoc = rand() % gridSize;
+    	randomColLoc = rand() % gridSize;
+
+    	grid[randomRowLoc][randomColLoc] = SYM_EXTRACT;
+
+        player_t player_01;
+        player_01.symbol = PLYR1;
+        player_01.lives = 3;
+        player_01.intel = 0;
+        player_01.alive = 1;
+        player_01.computerAI = 0;
+
+        while (addPlayer == 0){
+
+                player_01.xaxis = rand() % gridSize;
+                player_01.yaxis = rand() % gridSize;
+
+                if (grid[player_01.xaxis][player_01.yaxis] == SYM_EMPTY){
+
+                        grid[player_01.xaxis][player_01.yaxis] = player_01.symbol;
+                        addPlayer = 1;
+
+                }
+        }
+	
+
+    	while (intelCount < 3){
+
+        	randomRowLoc = rand() % gridSize;
+        	randomColLoc = rand() % gridSize;
+
+        	if (grid[randomRowLoc][randomColLoc] == SYM_EMPTY){
+			grid[randomRowLoc][randomColLoc] = SYM_INTEL;
+            		intelCount = intelCount + 1;
+
+        	}
+    	}
+
+    	while (lifeCount < 2){
+        	randomRowLoc = rand() % gridSize;
+        	randomColLoc = rand() % gridSize;
+
+        	if (grid[randomRowLoc][randomColLoc] == SYM_EMPTY){
+            		grid[randomRowLoc][randomColLoc] = SYM_LIFE;
+            		lifeCount = lifeCount + 1;
+		}
+	}
+
+    	while (wallCount < gridSize){
+        	randomRowLoc = rand() % gridSize;
+        	randomColLoc = rand() % gridSize;
+
+        	if (grid[randomRowLoc][randomColLoc] == SYM_EMPTY){
+            		grid[randomRowLoc][randomColLoc] = SYM_WALL;
+            		wallCount = wallCount + 1;
+        	}
+    	}
+
+
 	printGrid(grid, gridSize);
+
 }
 
 void gridSize_select(int *gridsize){
@@ -147,4 +208,4 @@ void printGrid(char **grid, int gridSize2){
 	}
 
 	printf("\n");
-}
+}	
