@@ -29,10 +29,10 @@ int main(){
 
 	srand(time(NULL));
 
-	int gridSize, playerMode, randomRowLoc, randomColLoc;
+	int gridSize, playerMode, randomRowLoc, randomColLoc, newRow, newCol;
 	int addPlayer = 0, intelCount = 0, lifeCount = 0, wallCount = 0;
 	int compPlayer = 0;
-	char compPlayerPrompt;
+	char compPlayerPrompt, movement;
 	char **grid = NULL;
 
 	printf("\n*****SpyNet – The Codebreaker Protocol*****\n");
@@ -75,6 +75,7 @@ int main(){
         	randomColLoc = rand() % gridSize;
 
         	if (grid[randomRowLoc][randomColLoc] == SYM_EMPTY){
+
 			grid[randomRowLoc][randomColLoc] = SYM_INTEL;
             		intelCount = intelCount + 1;
 
@@ -82,27 +83,65 @@ int main(){
     	}
 
     	while (lifeCount < 2){
+
         	randomRowLoc = rand() % gridSize;
         	randomColLoc = rand() % gridSize;
 
         	if (grid[randomRowLoc][randomColLoc] == SYM_EMPTY){
+
             		grid[randomRowLoc][randomColLoc] = SYM_LIFE;
             		lifeCount = lifeCount + 1;
 		}
 	}
 
     	while (wallCount < gridSize){
+
         	randomRowLoc = rand() % gridSize;
         	randomColLoc = rand() % gridSize;
 
         	if (grid[randomRowLoc][randomColLoc] == SYM_EMPTY){
+
             		grid[randomRowLoc][randomColLoc] = SYM_WALL;
             		wallCount = wallCount + 1;
         	}
     	}
+	
+	while (player_01.alive == 1){
 
+        	printf("Enter move (W/A/S/D): ");
+       		scanf(" %c", &movement);
 
-	printGrid(grid, gridSize);
+        	newRow = player_01.xaxis;
+        	newCol = player_01.yaxis;
+
+        	if (movement == 'w' || movement == 'W'){
+
+            		newRow = player_01.xaxis - 1;
+
+        	}else if (movement == 's' || movement == 'S'){
+
+            		newCol = player_01.xaxis + 1;
+
+        	}else if (movement == 'a' || movement == 'A'){
+
+            		newRow = player_01.yaxis - 1;
+
+       	 	}else if (movement == 'd' || movement == 'D'){
+
+            		newCol = player_01.yaxis + 1;
+        }
+
+		if (player_01.lives <= 0){
+
+            		printf("GAME OVER!\n");
+            		player_01.alive = 0;
+        	}
+
+        	if (player_01.alive == 1){
+
+            		printGrid(grid, gridSize);
+        	}
+	}
 
 }
 
