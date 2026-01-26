@@ -311,13 +311,13 @@ void printGrid(char **grid, int gridSize2){
 
 void freeMem(char **grid, int gridSize3){
 
-	int freeRow = 0;
+	int freeMemory = 0;
 
-	while (freeRow < gridSize){
+	while (freeMemory < gridSize3){
 
-                free(grid[freeRow]);
+                free(grid[freeMemory]);
 
-                freeRow = freeRow + 1;
+                freeMemory = freeMemory + 1;
         }
 
         free(grid);
