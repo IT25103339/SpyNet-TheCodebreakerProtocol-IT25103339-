@@ -15,6 +15,7 @@ void gridSize_select(int *gridsize);
 void playerMode_select(int *playermode, int *complayer, char *complayerPrompt);
 void createGrid(char ***Grid, int gridSize1);
 void printGrid(char **grid, int gridSize2);
+void freeMem(char **grid, int gridSize3);
 
 typedef struct{
 	int xaxis, yaxis;
@@ -30,7 +31,7 @@ int main(){
 	srand(time(NULL));
 
 	int gridSize, playerMode, randomRowLoc, randomColLoc, newRow, newCol;
-	int addPlayer = 0, intelCount = 0, lifeCount = 0, wallCount = 0;
+	int addPlayer = 0, intelCount = 0, lifeCount = 0, wallCount = 0, freeRow = 0;
 	int compPlayer = 0;
 	char compPlayerPrompt, movement;
 	char **grid = NULL;
@@ -120,16 +121,73 @@ int main(){
 
         	}else if (movement == 's' || movement == 'S'){
 
-            		newCol = player_01.xaxis + 1;
+            		newRow = player_01.xaxis + 1;
 
         	}else if (movement == 'a' || movement == 'A'){
 
-            		newRow = player_01.yaxis - 1;
+            		newCol = player_01.yaxis - 1;
 
        	 	}else if (movement == 'd' || movement == 'D'){
 
             		newCol = player_01.yaxis + 1;
         }
+
+		if (newRow < 0 || newRow >= gridSize || newCol < 0 || newCol >= gridSize){
+
+            		player_01.lives = player_01.lives - 1;
+            		printf("You have hit a boundary. Remaining lives: %d\n", player_01.lives);
+            
+			newRow = player_01.xaxis;
+            		newCol = player_01.yaxis;
+        	}
+
+        	else if (grid[newRow][newCol] == SYM_WALL){
+            
+			player_01.lives = player_01.lives - 1;
+            		printf("You have hit a wall. Remaining lives: %d\n", player_01.lives);
+            
+			newRow = player_01.xaxis;
+            		newCol = player_01.yaxis;
+        	}
+
+        	else{
+            	
+			if (grid[newRow][newCol] == SYM_INTEL){
+                	
+				player_01.intel = player_01.intel + 1;
+                		printf("Intel Collected! Total: %d\n", player_01.intel);
+            		}
+            	
+			else if (grid[newRow][newCol] == SYM_LIFE){
+                
+				player_01.lives = player_01.lives + 1;
+                		printf("Life Collected! Total: %d\n", player_01.lives);
+            		}
+            
+			else if (grid[newRow][newCol] == SYM_EXTRACT){
+                
+				if (player_01.intel >= 3) {
+                    		printf("Mission Complete!\n");
+                    		player_01.alive = 0;
+				
+                	}else{
+                    
+				printf("Collect 3 Intel first!\n");
+                    
+				newRow = player_01.xaxis;
+                    		newCol = player_01.yaxis;
+             
+			}
+        
+			}
+
+			grid[player_01.xaxis][player_01.yaxis] = SYM_EMPTY;
+            		
+			player_01.xaxis = newRow;
+            		player_01.yaxis = newCol;
+            		grid[player_01.xaxis][player_01.yaxis] = player_01.symbol;
+      
+		}
 
 		if (player_01.lives <= 0){
 
@@ -143,6 +201,8 @@ int main(){
         	}
 	}
 
+
+	freeMem(grid, gridSize);
 }
 
 void gridSize_select(int *gridsize){
@@ -247,4 +307,18 @@ void printGrid(char **grid, int gridSize2){
 	}
 
 	printf("\n");
-}	
+}
+
+void freeMem(char **grid, int gridSize3){
+
+	int freeRow = 0;
+
+	while (freeRow < gridSize){
+
+                free(grid[freeRow]);
+
+                freeRow = freeRow + 1;
+        }
+
+        free(grid);
+}
