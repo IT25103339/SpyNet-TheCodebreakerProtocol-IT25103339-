@@ -149,9 +149,25 @@ void playTurn(player_t *playerAvatar, char **grid, int gridSize7){ // handle pla
 		printf("Computer Player %c moved!\n", playerAvatar->symbol);
 	}else{
 
-		printf("Player %c: Enter your move (W/A/S/D): ", playerAvatar->symbol);
+		printf("Player %c: Enter your move (W/A/S/D) or 'Q' to quit: ", playerAvatar->symbol);
 		scanf(" %c", &movement);
 	}
+
+	if (movement == 'q' || movement == 'Q'){ // if the player wants to quit, they can  
+
+		printf("Player %c quit the game!\n", playerAvatar->symbol);
+		
+		sprintf(logBufferTxt, "Player %c has quit the game!", playerAvatar->symbol);
+		logMessage(logBufferTxt);
+		
+		playerAvatar->alive = 0;   // mark as out
+		playerAvatar->escaped = 0; // did not win
+		
+		grid[playerAvatar->xaxis][playerAvatar->yaxis] = SYM_EMPTY; // remove the player from the map
+		
+		return;
+	}
+
 
 	if (movement == 'w' || movement == 'W'){ // player movement direction logic
 		newRow = newRow - 1;}
@@ -163,26 +179,44 @@ void playTurn(player_t *playerAvatar, char **grid, int gridSize7){ // handle pla
 		newCol = newCol + 1;
 	}
 
-	if (newRow < 0 || newRow >= gridSize7 || newCol < 0 || newCol >= gridSize7 || grid[newRow][newCol] == SYM_WALL){ // check for player collisions
+	if (newRow < 0 || newRow >= gridSize7 || newCol < 0 || newCol >= gridSize7){ // check for player collisions boundary
 
 		playerAvatar->lives = playerAvatar->lives- 1;
 
-		sprintf(logBufferTxt, "Player %c hit Wall/Boundary!. Lives left: %d", playerAvatar->symbol, playerAvatar->lives);// write to log
+		sprintf(logBufferTxt, "Player %c hit Boundary!. Lives left: %d", playerAvatar->symbol, playerAvatar->lives);// write to log
 		
 		logMessage(logBufferTxt);// write to log
-	} 
+
+	}
+
+	else if (grid[newRow][newCol] == SYM_WALL){ // check for player collisions wall
+
+                playerAvatar->lives = playerAvatar->lives- 1;
+
+                sprintf(logBufferTxt, "Player %c hit a Wall!. Lives left: %d", playerAvatar->symbol, playerAvatar->lives);// write to log
+
+                logMessage(logBufferTxt);// write to log
+        }
+
 	
 	else{
 		sprintf(logBufferTxt, "Player %c moved to (%d, %d)", playerAvatar->symbol, newRow, newCol);
-
 		logMessage(logBufferTxt);
 
 		if (grid[newRow][newCol] == SYM_INTEL){ // item pick up logic
-			playerAvatar->intel = playerAvatar->intel + 1; 
+			playerAvatar->intel = playerAvatar->intel + 1;
+
+			sprintf(logBufferTxt, "Player %c collected 1 intel!. Total: %d/3", playerAvatar->symbol, playerAvatar->intel);
+			logMessage(logBufferTxt);
+			
 			grid[newRow][newCol] = SYM_EMPTY; // clear the item location as empty
 
 		}else if (grid[newRow][newCol] == SYM_LIFE){
 			playerAvatar->lives = playerAvatar->lives + 1;
+
+			sprintf(logBufferTxt, "Player %c collected 1 life!. Total: %d", playerAvatar->symbol, playerAvatar->lives);
+                        logMessage(logBufferTxt);
+
 			grid[newRow][newCol] = SYM_EMPTY;
 		
 		}else if (grid[newRow][newCol] == SYM_EXTRACT){ // check for extract location
@@ -190,6 +224,9 @@ void playTurn(player_t *playerAvatar, char **grid, int gridSize7){ // handle pla
 			if (playerAvatar->intel >= 3){ // if player has 3 intel , allow extraction
 				
 				printf("Player %c Extracted!\n", playerAvatar->symbol);
+
+				sprintf(logBufferTxt, "Player %c has extracted! Mission won by Player %c", playerAvatar->symbol, playerAvatar->symbol);
+				logMessage(logBufferTxt);
 				
 				playerAvatar->alive = 0;
 				playerAvatar->escaped = 1;
@@ -219,6 +256,9 @@ void playTurn(player_t *playerAvatar, char **grid, int gridSize7){ // handle pla
 	
 		printf("Player %c died!\n", playerAvatar->symbol);
 		
+		sprintf(logBufferTxt, "Player %c died!", playerAvatar->symbol);
+		logMessage(logBufferTxt);
+
 		playerAvatar->alive = 0;
 		playerAvatar->escaped = 0;
 		
